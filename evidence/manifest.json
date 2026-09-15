@@ -1,0 +1,142 @@
+{
+  "generated_at": "2026-09-15T13:17:26.910519+00:00",
+  "versions": {
+    "python": "3.12.12",
+    "playwright": "1.62.0",
+    "openai": "3.13.0",
+    "pydantic": "2.13.5",
+    "fastapi": "0.141.1",
+    "opencv-python-headless": "5.0.0.93"
+  },
+  "capability_sha256": "22d082cdd611821daaa9ea935423ddaaf9f75335fa870562bedec7c0482e6261",
+  "discovery": {
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "goal_template": "Look up member {{inputs.member_id}} and read the current balance of their savings account",
+    "turns": 7,
+    "usage": {
+      "input_tokens": 41848,
+      "cached_input_tokens": 35191,
+      "output_tokens": 413
+    }
+  },
+  "replays": [
+    {
+      "folder": "replay-success-member-b",
+      "scenario": "normal",
+      "inputs": "member-b.json",
+      "purpose": "different parameter than discovery",
+      "status": "success",
+      "code": null,
+      "assisted": false
+    },
+    {
+      "folder": "replay-outcome-member-not-found",
+      "scenario": "normal",
+      "inputs": "member-missing.json",
+      "purpose": "business outcome",
+      "status": "business_outcome",
+      "code": "member_not_found",
+      "assisted": false
+    },
+    {
+      "folder": "replay-outcome-account-not-found",
+      "scenario": "normal",
+      "inputs": "member-no-savings.json",
+      "purpose": "business outcome",
+      "status": "business_outcome",
+      "code": "account_not_found",
+      "assisted": false
+    },
+    {
+      "folder": "replay-outcome-validation-rejected",
+      "scenario": "normal",
+      "inputs": "member-invalid-format.json",
+      "purpose": "business outcome",
+      "status": "business_outcome",
+      "code": "validation_rejected",
+      "assisted": false
+    },
+    {
+      "folder": "replay-recovery-maintenance-notice",
+      "scenario": "maintenance",
+      "inputs": "member-b.json",
+      "purpose": "recoverable interstitial",
+      "status": "success",
+      "code": null,
+      "assisted": false
+    },
+    {
+      "folder": "replay-recovery-transient-error",
+      "scenario": "transient_error",
+      "inputs": "member-b.json",
+      "purpose": "recoverable read error",
+      "status": "success",
+      "code": null,
+      "assisted": false
+    },
+    {
+      "folder": "replay-recovery-slow-load",
+      "scenario": "slow",
+      "inputs": "member-b.json",
+      "purpose": "slow response within step deadline",
+      "status": "success",
+      "code": null,
+      "assisted": false
+    },
+    {
+      "folder": "replay-visual-canvas-shifted",
+      "scenario": "canvas_shift",
+      "inputs": "member-b.json",
+      "purpose": "visual anchor relocated",
+      "status": "success",
+      "code": null,
+      "assisted": false
+    },
+    {
+      "folder": "replay-failure-permission-denied",
+      "scenario": "permission_denied",
+      "inputs": "member-b.json",
+      "purpose": "hard failure",
+      "status": "failure",
+      "code": "permission_denied",
+      "assisted": false
+    },
+    {
+      "folder": "replay-failure-ambiguous-canvas",
+      "scenario": "duplicate_canvas_control",
+      "inputs": "member-b.json",
+      "purpose": "ambiguity",
+      "status": "failure",
+      "code": "target_ambiguous",
+      "assisted": false
+    },
+    {
+      "folder": "replay-escalation-no-operator",
+      "scenario": "unknown_dialog",
+      "inputs": "member-b.json",
+      "purpose": "stuck, no operator",
+      "status": "failure",
+      "code": "escalation_unavailable",
+      "assisted": false
+    },
+    {
+      "folder": "replay-handoff-human-operator",
+      "scenario": "session_expired",
+      "inputs": "member-b.json",
+      "purpose": "session expiry handed to a person in the operator console",
+      "status": "success",
+      "code": null,
+      "assisted": true
+    }
+  ],
+  "prompt_injection_discovery": {
+    "completed": true,
+    "reason": "goal completed and verified",
+    "turns": 9,
+    "blocked_requests": 0,
+    "blocked_actions": 0
+  },
+  "reproduce": "uv run --env-file .env python scripts/record_evidence.py",
+  "synthetic_data_only": true
+}

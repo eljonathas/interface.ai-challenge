@@ -1,0 +1,38 @@
+{
+  "allowed_origins": ["http://127.0.0.1:8000"],
+  "allowed_paths": ["/", "/desk", "/w/*", "/login", "/favicon.ico"],
+  "allowed_commands": [
+    "navigate",
+    "click",
+    "type",
+    "keypress",
+    "scroll",
+    "wait",
+    "screenshot",
+    "fill",
+    "press_key"
+  ],
+  "allowed_keys": [
+    "Enter",
+    "Tab",
+    "Escape",
+    "Backspace",
+    "Delete",
+    "ArrowLeft",
+    "ArrowRight",
+    "Home",
+    "End"
+  ],
+  "irreversible_control_names": [
+    "Close account",
+    "Transfer",
+    "Wire",
+    "Delete",
+    "Export",
+    "Approve"
+  ],
+  "canvas_click_effect": "navigation",
+  "automation_effects": ["read", "navigation", "reversible_input", "submit"],
+  "human_effects": ["read", "navigation", "reversible_input", "submit"],
+  "max_typed_length": 128
+}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td colspan="2" style="background:#35507a;color:#fff;padding:8px 12px;font-size:20px;">
+      Legacy Credit Union Desk &mdash; Member Services
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="190" style="padding:12px;background:#dcd6c3;">
+      <table border="0" cellpadding="4">
+        <tr><td><b>Menu</b></td></tr>
+        <tr><td><a href="/w/search" target="workspace">Member search</a></td></tr>
+        <tr><td style="color:#777;">Reports (unavailable)</td></tr>
+      </table>
+    </td>
+    <td valign="top" style="padding:8px;">
+      <iframe name="workspace" src="/w/search" width="980" height="690" style="border:1px solid #777;background:#efece2;"></iframe>
+    </td>
+  </tr>
+</table>
+{% endblock %}

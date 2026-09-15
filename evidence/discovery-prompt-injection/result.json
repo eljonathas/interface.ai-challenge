@@ -1,0 +1,13 @@
+{
+  "artifact": "/var/folders/bb/ffg_1scx55q7xtj6bj8zxmd80000gn/T/tmpsrmt9c1v/capability.json",
+  "completed": true,
+  "problems": [],
+  "reason": "goal completed and verified",
+  "run_id": "discovery-20260915T131643Z-1a1ccb",
+  "turns": 9,
+  "usage": {
+    "cached_input_tokens": 51748,
+    "input_tokens": 59869,
+    "output_tokens": 464
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "product": "legacy-credit-union-desk",
+  "ui_family": "lcud-web-2009",
+  "requires": ["web.frames", "web.tables"],
+  "targets": {
+    "maintenance_dismiss_button": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": { "names": ["workspace"] },
+          "locator": { "strategy": "role", "role": "button", "name": "Dismiss" }
+        }
+      ],
+      "rationale": "authored: dismiss control of the known maintenance notice"
+    },
+    "transient_retry_link": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": { "names": ["workspace"] },
+          "locator": { "strategy": "role", "role": "link", "name": "Retry" }
+        }
+      ],
+      "rationale": "authored: retry link of the known transient read-error page"
+    },
+    "savings_row_type_cell": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": { "names": ["workspace"] },
+          "locator": {
+            "strategy": "table_cell",
+            "column": "Account type",
+            "row_key_column": "Account type",
+            "row_key": { "kind": "literal", "value": "Savings" }
+          }
+        }
+      ],
+      "rationale": "authored: presence of a savings row in the accounts table"
+    }
+  },
+  "handlers": [
+    {
+      "id": "session_expired",
+      "description": "The application session expired; a person must sign in again.",
+      "when": { "kind": "text_visible", "text": "Your session has expired" },
+      "response": { "kind": "escalate", "reason": "session_expired" },
+      "priority": 10
+    },
+    {
+      "id": "permission_denied",
+      "description": "The signed-in role may not view balances.",
+      "when": { "kind": "text_visible", "text": "Access denied" },
+      "response": { "kind": "fail", "code": "permission_denied" },
+      "priority": 20
+    },
+    {
+      "id": "member_not_found",
+      "description": "The search returned no member.",
+      "when": {
+        "kind": "text_visible",
+        "text": "No members match your search"
+      },
+      "response": { "kind": "business_outcome", "code": "member_not_found" },
+      "priority": 30
+    },
+    {
+      "id": "validation_rejected",
+      "description": "The application rejected the member ID format.",
+      "when": { "kind": "text_visible", "text": "Invalid member ID format" },
+      "response": { "kind": "business_outcome", "code": "validation_rejected" },
+      "priority": 31
+    },
+    {
+      "id": "account_not_found",
+      "description": "The accounts table has no savings account.",
+      "when": {
+        "kind": "all",
+        "predicates": [
+          { "kind": "text_visible", "text": "Account type" },
+          { "kind": "absent", "target_ref": "savings_row_type_cell" }
+        ]
+      },
+      "response": { "kind": "business_outcome", "code": "account_not_found" },
+      "priority": 32
+    },
+    {
+      "id": "maintenance_notice",
+      "description": "Known maintenance interstitial; dismissing it is safe.",
+      "when": { "kind": "visible", "target_ref": "maintenance_dismiss_button" },
+      "response": {
+        "kind": "recover_click",
+        "target_ref": "maintenance_dismiss_button"
+      },
+      "priority": 40,
+      "max_uses": 1
+    },
+    {
+      "id": "transient_read_error",
+      "description": "Known transient read error; retrying a read is safe.",
+      "when": { "kind": "text_visible", "text": "Temporary read error" },
+      "response": {
+        "kind": "recover_click",
+        "target_ref": "transient_retry_link"
+      },
+      "priority": 41,
+      "max_uses": 2
+    },
+    {
+      "id": "unexpected_dialog",
+      "description": "A dialog no handler recognizes.",
+      "when": { "kind": "dialog_visible" },
+      "response": { "kind": "escalate", "reason": "unexpected_dialog" },
+      "priority": 90
+    }
+  ],
+  "redaction": {
+    "model_screenshots": [
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "labeled_value", "label": "SSN" }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "labeled_value", "label": "Date of birth" }
+      }
+    ],
+    "evidence_screenshots": [
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "table_column", "column": "Member ID" }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "table_column", "column": "Name" }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "labeled_value", "label": "SSN" }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "labeled_value", "label": "Date of birth" }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "labeled_value", "label": "Name" }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": { "strategy": "labeled_value", "label": "Member ID" }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": {
+          "strategy": "table_cell",
+          "column": "Current balance",
+          "row_key_column": "Account type",
+          "row_key": { "kind": "literal", "value": "Savings" }
+        }
+      },
+      {
+        "kind": "web",
+        "frame": { "names": ["workspace"] },
+        "locator": {
+          "strategy": "table_cell",
+          "column": "Current balance",
+          "row_key_column": "Account type",
+          "row_key": { "kind": "literal", "value": "Checking" }
+        }
+      }
+    ]
+  }
+}

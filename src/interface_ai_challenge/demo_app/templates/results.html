@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>Search results</h3>
+{% if error %}
+<p class="msg">{{ error }}</p>
+{% elif not rows %}
+<p class="msg">No members match your search.</p>
+{% else %}
+<table class="grid">
+  <tr><th>Member ID</th><th>Name</th><th>Branch</th><th>Action</th></tr>
+  {% for member, token in rows %}
+  <tr>
+    <td>{{ member.id }}</td>
+    <td>{{ member.name }}</td>
+    <td>{{ member.branch }}</td>
+    <td><a href="/w/m/{{ token }}">Open</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+<p><a href="/w/search">New search</a></p>
+{% endblock %}

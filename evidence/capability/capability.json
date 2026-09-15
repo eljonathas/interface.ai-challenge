@@ -1,0 +1,527 @@
+{
+  "schema_version": "2.0",
+  "capability_version": "1.0.0",
+  "contract": {
+    "capability_id": "member.savings_balance",
+    "description": "Look up a member and read the current balance of their savings account.",
+    "goal": "Look up member {{inputs.member_id}} and read the current balance of their savings account",
+    "inputs": [
+      {
+        "name": "member_id",
+        "type": "string",
+        "description": "The ID of the member to look up.",
+        "sensitive": true,
+        "max_length": 64,
+        "identifies_record": true
+      }
+    ],
+    "outputs": [
+      {
+        "name": "current_balance",
+        "description": "The current balance of the member's savings account.",
+        "parser": {
+          "kind": "decimal_money",
+          "locale": "en-US"
+        },
+        "sensitive": true
+      }
+    ],
+    "business_outcomes": [
+      "account_not_found",
+      "member_not_found",
+      "validation_rejected"
+    ]
+  },
+  "application": {
+    "product": "legacy-credit-union-desk",
+    "ui_family": "lcud-web-2009",
+    "requires": [
+      "visual.template",
+      "web.frames",
+      "web.tables"
+    ]
+  },
+  "entry": {
+    "path": "/desk",
+    "required_bindings": [
+      "base_url"
+    ]
+  },
+  "targets": {
+    "maintenance_dismiss_button": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "role",
+            "role": "button",
+            "name": "Dismiss"
+          }
+        }
+      ],
+      "rationale": "authored: dismiss control of the known maintenance notice"
+    },
+    "transient_retry_link": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "role",
+            "role": "link",
+            "name": "Retry"
+          }
+        }
+      ],
+      "rationale": "authored: retry link of the known transient read-error page"
+    },
+    "savings_row_type_cell": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "table_cell",
+            "column": "Account type",
+            "row_key_column": "Account type",
+            "row_key": {
+              "kind": "literal",
+              "value": "Savings"
+            },
+            "control": null
+          }
+        }
+      ],
+      "rationale": "authored: presence of a savings row in the accounts table"
+    },
+    "member_id_field": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "labeled_field",
+            "label": "Member ID"
+          }
+        }
+      ],
+      "rationale": "text field identified by its visible label 'Member ID'; generated names and ids are ignored"
+    },
+    "search_button": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "role",
+            "role": "button",
+            "name": "Search"
+          }
+        }
+      ],
+      "rationale": "button identified by its exact accessible name 'Search'"
+    },
+    "open_link_in_row": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "table_cell",
+            "column": "Action",
+            "row_key_column": "Member ID",
+            "row_key": {
+              "kind": "input",
+              "name": "member_id"
+            },
+            "control": {
+              "strategy": "role",
+              "role": "link",
+              "name": "Open"
+            }
+          }
+        }
+      ],
+      "rationale": "link 'Open' inside the row where 'Member ID' equals the input"
+    },
+    "visual_control": {
+      "strategies": [
+        {
+          "kind": "visual",
+          "template_sha256": "67372e3b20274e1c3accec35e6be44bb553f87fa41cd893d1fa035cf64683ea4",
+          "template_size": {
+            "width": 96,
+            "height": 30
+          },
+          "click_offset": {
+            "x": 48,
+            "y": 15
+          },
+          "search_region": null,
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "min_score": 0.92
+        }
+      ],
+      "rationale": "control drawn without a DOM element; anchored by a static image template that must match exactly once in the current screenshot"
+    },
+    "output_current_balance": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "table_cell",
+            "column": "Current balance",
+            "row_key_column": "Account type",
+            "row_key": {
+              "kind": "literal",
+              "value": "Savings"
+            },
+            "control": null
+          }
+        }
+      ],
+      "rationale": "cell under column 'Current balance' in the row where 'Account type' has a stable label"
+    },
+    "identity_member_id": {
+      "strategies": [
+        {
+          "kind": "web",
+          "frame": {
+            "names": [
+              "workspace"
+            ]
+          },
+          "locator": {
+            "strategy": "labeled_value",
+            "label": "Member ID"
+          }
+        }
+      ],
+      "rationale": "visible identity value that must equal the input"
+    }
+  },
+  "steps": [
+    {
+      "id": "s00_open_entry",
+      "action": {
+        "kind": "navigate",
+        "base_url": {
+          "kind": "binding",
+          "name": "base_url"
+        },
+        "path": "/desk"
+      },
+      "precondition": null,
+      "postcondition": {
+        "kind": "visible",
+        "target_ref": "member_id_field"
+      },
+      "effect": "navigation",
+      "timeout_ms": 10000,
+      "max_attempts": 2,
+      "resume_boundary": true,
+      "origin": "compiled"
+    },
+    {
+      "id": "s01_fill_member_id_field",
+      "action": {
+        "kind": "fill",
+        "target_ref": "member_id_field",
+        "value": {
+          "kind": "input",
+          "name": "member_id"
+        }
+      },
+      "precondition": {
+        "kind": "visible",
+        "target_ref": "member_id_field"
+      },
+      "postcondition": {
+        "kind": "field_equals",
+        "target_ref": "member_id_field",
+        "value": {
+          "kind": "input",
+          "name": "member_id"
+        }
+      },
+      "effect": "reversible_input",
+      "timeout_ms": 10000,
+      "max_attempts": 1,
+      "resume_boundary": false,
+      "origin": "discovered"
+    },
+    {
+      "id": "s02_click_search_button",
+      "action": {
+        "kind": "click",
+        "target_ref": "search_button"
+      },
+      "precondition": {
+        "kind": "visible",
+        "target_ref": "search_button"
+      },
+      "postcondition": {
+        "kind": "visible",
+        "target_ref": "open_link_in_row"
+      },
+      "effect": "submit",
+      "timeout_ms": 10000,
+      "max_attempts": 1,
+      "resume_boundary": false,
+      "origin": "discovered"
+    },
+    {
+      "id": "s03_click_open_link_in_row",
+      "action": {
+        "kind": "click",
+        "target_ref": "open_link_in_row"
+      },
+      "precondition": {
+        "kind": "visible",
+        "target_ref": "open_link_in_row"
+      },
+      "postcondition": {
+        "kind": "visible",
+        "target_ref": "visual_control"
+      },
+      "effect": "navigation",
+      "timeout_ms": 10000,
+      "max_attempts": 1,
+      "resume_boundary": false,
+      "origin": "discovered"
+    },
+    {
+      "id": "s04_click_visual_control",
+      "action": {
+        "kind": "click",
+        "target_ref": "visual_control"
+      },
+      "precondition": {
+        "kind": "visible",
+        "target_ref": "visual_control"
+      },
+      "postcondition": {
+        "kind": "all",
+        "predicates": [
+          {
+            "kind": "text_equals",
+            "target_ref": "identity_member_id",
+            "value": {
+              "kind": "input",
+              "name": "member_id"
+            }
+          },
+          {
+            "kind": "visible",
+            "target_ref": "output_current_balance"
+          }
+        ]
+      },
+      "effect": "navigation",
+      "timeout_ms": 10000,
+      "max_attempts": 1,
+      "resume_boundary": false,
+      "origin": "discovered"
+    }
+  ],
+  "handlers": [
+    {
+      "id": "session_expired",
+      "description": "The application session expired; a person must sign in again.",
+      "when": {
+        "kind": "text_visible",
+        "text": "Your session has expired",
+        "frame": null
+      },
+      "response": {
+        "kind": "escalate",
+        "reason": "session_expired"
+      },
+      "priority": 10,
+      "max_uses": 1,
+      "origin": "authored"
+    },
+    {
+      "id": "permission_denied",
+      "description": "The signed-in role may not view balances.",
+      "when": {
+        "kind": "text_visible",
+        "text": "Access denied",
+        "frame": null
+      },
+      "response": {
+        "kind": "fail",
+        "code": "permission_denied"
+      },
+      "priority": 20,
+      "max_uses": 1,
+      "origin": "authored"
+    },
+    {
+      "id": "member_not_found",
+      "description": "The search returned no member.",
+      "when": {
+        "kind": "text_visible",
+        "text": "No members match your search",
+        "frame": null
+      },
+      "response": {
+        "kind": "business_outcome",
+        "code": "member_not_found"
+      },
+      "priority": 30,
+      "max_uses": 1,
+      "origin": "authored"
+    },
+    {
+      "id": "validation_rejected",
+      "description": "The application rejected the member ID format.",
+      "when": {
+        "kind": "text_visible",
+        "text": "Invalid member ID format",
+        "frame": null
+      },
+      "response": {
+        "kind": "business_outcome",
+        "code": "validation_rejected"
+      },
+      "priority": 31,
+      "max_uses": 1,
+      "origin": "authored"
+    },
+    {
+      "id": "account_not_found",
+      "description": "The accounts table has no savings account.",
+      "when": {
+        "kind": "all",
+        "predicates": [
+          {
+            "kind": "text_visible",
+            "text": "Account type",
+            "frame": null
+          },
+          {
+            "kind": "absent",
+            "target_ref": "savings_row_type_cell"
+          }
+        ]
+      },
+      "response": {
+        "kind": "business_outcome",
+        "code": "account_not_found"
+      },
+      "priority": 32,
+      "max_uses": 1,
+      "origin": "authored"
+    },
+    {
+      "id": "maintenance_notice",
+      "description": "Known maintenance interstitial; dismissing it is safe.",
+      "when": {
+        "kind": "visible",
+        "target_ref": "maintenance_dismiss_button"
+      },
+      "response": {
+        "kind": "recover_click",
+        "target_ref": "maintenance_dismiss_button"
+      },
+      "priority": 40,
+      "max_uses": 1,
+      "origin": "authored"
+    },
+    {
+      "id": "transient_read_error",
+      "description": "Known transient read error; retrying a read is safe.",
+      "when": {
+        "kind": "text_visible",
+        "text": "Temporary read error",
+        "frame": null
+      },
+      "response": {
+        "kind": "recover_click",
+        "target_ref": "transient_retry_link"
+      },
+      "priority": 41,
+      "max_uses": 2,
+      "origin": "authored"
+    },
+    {
+      "id": "unexpected_dialog",
+      "description": "A dialog no handler recognizes.",
+      "when": {
+        "kind": "dialog_visible"
+      },
+      "response": {
+        "kind": "escalate",
+        "reason": "unexpected_dialog"
+      },
+      "priority": 90,
+      "max_uses": 1,
+      "origin": "authored"
+    }
+  ],
+  "success": {
+    "kind": "all",
+    "predicates": [
+      {
+        "kind": "text_equals",
+        "target_ref": "identity_member_id",
+        "value": {
+          "kind": "input",
+          "name": "member_id"
+        }
+      },
+      {
+        "kind": "visible",
+        "target_ref": "output_current_balance"
+      }
+    ]
+  },
+  "extractions": [
+    {
+      "output": "current_balance",
+      "target_ref": "output_current_balance"
+    }
+  ],
+  "provenance": {
+    "discovery_run_id": "discovery-20260915T131519Z-9956b0",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "compiler_version": "0.2.0",
+    "created_at": "2026-09-15T13:15:48.810699Z",
+    "human_interventions": 0
+  }
+}

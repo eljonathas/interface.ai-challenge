@@ -1,0 +1,10 @@
+{
+  "assisted": false,
+  "capability_id": "member.savings_balance",
+  "evidence_ref": null,
+  "outputs": {
+    "current_balance": "[REDACTED:output.current_balance]"
+  },
+  "run_id": "replay-20260915T131556Z-846c8e",
+  "status": "success"
+}

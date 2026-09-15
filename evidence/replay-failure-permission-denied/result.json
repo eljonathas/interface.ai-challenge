@@ -1,0 +1,33 @@
+{
+  "assisted": false,
+  "capability_id": "member.savings_balance",
+  "code": "permission_denied",
+  "evidence_ref": "screenshots/0023-failure.png",
+  "expected": {
+    "postcondition": {
+      "kind": "all",
+      "predicates": [
+        {
+          "kind": "text_equals",
+          "target_ref": "identity_member_id",
+          "value": {
+            "kind": "input",
+            "name": "member_id"
+          }
+        },
+        {
+          "kind": "visible",
+          "target_ref": "output_current_balance"
+        }
+      ]
+    }
+  },
+  "message": "The signed-in role may not view balances.",
+  "observed": {
+    "handler": "permission_denied"
+  },
+  "retryable": false,
+  "run_id": "replay-20260915T131601Z-7e8222",
+  "status": "failure",
+  "step_id": "s04_click_visual_control"
+}

@@ -1,0 +1,24 @@
+{
+  "assisted": false,
+  "capability_id": "member.savings_balance",
+  "code": "target_ambiguous",
+  "evidence_ref": "screenshots/0018-failure.png",
+  "expected": {
+    "postcondition": {
+      "kind": "visible",
+      "target_ref": "visual_control"
+    }
+  },
+  "message": "postcondition was not satisfied within 10000 ms and no known state explains it",
+  "observed": {
+    "candidate_counts": {
+      "visual_control": 2
+    },
+    "dialogs": [],
+    "path": "/w/m/5c8cf8d42e45"
+  },
+  "retryable": false,
+  "run_id": "replay-20260915T131603Z-15bd73",
+  "status": "failure",
+  "step_id": "s03_click_open_link_in_row"
+}

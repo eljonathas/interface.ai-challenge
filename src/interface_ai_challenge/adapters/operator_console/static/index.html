@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Operator console</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #f4f4f2; color: #1d1d1b; }
+  header { display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+  #state { font-weight: 600; }
+  #request { background: #fff; border: 1px solid #ccc; padding: 8px 12px; margin: 12px 0; white-space: pre-wrap; font-size: 13px; }
+  #controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  #screen { border: 2px solid #999; max-width: 100%; cursor: crosshair; }
+  #screen.human { border-color: #2a7a2a; }
+  #error { color: #a12222; min-height: 1.2em; }
+  button { padding: 6px 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Operator console</h1>
+  <span>You are <code>__OPERATOR__</code></span>
+  <span id="state">loading…</span>
+</header>
+<div id="request">No pending intervention.</div>
+<div id="controls">
+  <button id="claim">Take control</button>
+  <input id="text" placeholder="Text to type" autocomplete="off">
+  <button id="type">Type</button>
+  <button data-key="Enter">Enter</button>
+  <button data-key="Tab">Tab</button>
+  <button data-key="Escape">Escape</button>
+  <button id="handback">Hand control back</button>
+  <button id="abort">Abort run</button>
+</div>
+<div id="error"></div>
+<img id="screen" alt="Live session">
+<script>
+const csrf = "__CSRF__";
+const operatorId = "__OPERATOR__";
+let epoch = null;
+let revision = -1;
+const $ = (id) => document.getElementById(id);
+
+async function post(path, body) {
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf },
+    body: JSON.stringify(body || {}),
+  });
+  const payload = await response.json().catch(() => ({}));
+  $("error").textContent = response.ok ? "" : (payload.detail || response.statusText);
+  if (response.ok) setTimeout(refreshScreen, 250);
+  return response.ok ? payload : null;
+}
+
+async function refreshStatus() {
+  const status = await (await fetch("/api/status")).json();
+  const control = status.control;
+  $("state").textContent = `state: ${control.state} · owner: ${control.owner_id || "none"} · epoch: ${control.epoch}`;
+  $("screen").classList.toggle("human", control.state === "human" && control.owner_id === operatorId);
+  if (control.state === "human" && control.owner_id === operatorId) epoch = control.epoch; else epoch = null;
+  const request = status.intervention;
+  $("request").textContent = request
+    ? `Intervention ${request.id}\nSubject: ${request.subject}\nStep: ${request.step_id || "-"}\nReason: ${request.reason}\nOn hand-back: ${request.resume_behavior}\nObserved: ${JSON.stringify(request.observed)}`
+    : "No pending intervention.";
+}
+
+async function refreshScreen() {
+  const response = await fetch("/api/screenshot");
+  if (!response.ok) return;
+  revision = Number(response.headers.get("X-Revision"));
+  const url = URL.createObjectURL(await response.blob());
+  const img = $("screen");
+  const previous = img.src;
+  img.src = url;
+  if (previous) URL.revokeObjectURL(previous);
+}
+
+$("screen").addEventListener("click", (event) => {
+  if (epoch === null) { $("error").textContent = "Take control first."; return; }
+  const img = event.currentTarget;
+  const rect = img.getBoundingClientRect();
+  const x = Math.round((event.clientX - rect.left) * img.naturalWidth / rect.width);
+  const y = Math.round((event.clientY - rect.top) * img.naturalHeight / rect.height);
+  post("/api/click", { x, y, epoch, revision });
+});
+$("claim").onclick = async () => { const result = await post("/api/claim"); if (result) epoch = result.epoch; refreshStatus(); };
+$("type").onclick = () => { if ($("text").value) post("/api/type", { text: $("text").value, epoch }).then(() => { $("text").value = ""; }); };
+document.querySelectorAll("[data-key]").forEach((button) => { button.onclick = () => post("/api/key", { keys: [button.dataset.key], epoch }); });
+$("handback").onclick = () => post("/api/hand-back").then(refreshStatus);
+$("abort").onclick = () => post("/api/abort").then(refreshStatus);
+
+setInterval(refreshStatus, 1000);
+setInterval(refreshScreen, 1500);
+refreshStatus();
+refreshScreen();
+</script>
+</body>
+</html>

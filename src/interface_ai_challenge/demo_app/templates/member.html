@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>Member profile</h3>
+<table class="grid">
+  <tr><td>Member ID:</td><td>{{ member.id }}</td></tr>
+  <tr><td>Name:</td><td>{{ member.name }}</td></tr>
+  <tr><td>SSN:</td><td>{{ member.ssn }}</td></tr>
+  <tr><td>Date of birth:</td><td>{{ member.birth_date }}</td></tr>
+  <tr><td>Branch:</td><td>{{ member.branch }}</td></tr>
+</table>
+<p>Sections:</p>
+<canvas id="toolbar" width="480" height="44" style="display:block;margin-left:{{ shift }}px;" aria-hidden="true"></canvas>
+<script>
+  (() => {
+    const buttons = [
+      { label: "Summary", x: 4, href: null },
+      { label: "Accounts", x: 124, href: "{{ accounts_url }}" },
+      { label: "Notes", x: 244, href: null },
+      {% if duplicate %}{ label: "Accounts", x: 364, href: "{{ accounts_url }}" },{% endif %}
+    ];
+    const canvas = document.getElementById("toolbar");
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#d9d4c7";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    for (const button of buttons) {
+      context.fillStyle = "#35507a";
+      context.fillRect(button.x, 6, 112, 32);
+      context.fillStyle = "#ffffff";
+      context.font = "bold 15px sans-serif";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText(button.label, button.x + 56, 22);
+    }
+    canvas.addEventListener("click", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const hit = buttons.find((b) => x >= b.x && x <= b.x + 112 && y >= 6 && y <= 38);
+      if (hit && hit.href) window.location.href = hit.href;
+    });
+  })();
+</script>
+{% if dialog %}
+<div role="dialog" aria-label="Export confirmation" id="export"
+     style="position:fixed;top:60px;left:60px;width:380px;background:#fff;border:2px solid #333;padding:16px;">
+  Export this member's file to the shared drive?
+  <br><br>
+  <button type="button">Export file</button>
+  <button type="button" onclick="document.getElementById('export').remove()">Cancel</button>
+</div>
+{% endif %}
+{% endblock %}

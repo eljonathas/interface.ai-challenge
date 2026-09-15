@@ -1,0 +1,13 @@
+{
+  "capability_id": "member.savings_balance",
+  "description": "Looks up a credit union member by member ID and returns the current balance of their savings account. Read-only; never changes data.",
+  "goal": "Look up the member {{inputs.member_id}} and read the current balance of their savings account in USD.",
+  "inputs": [
+    {"name": "member_id", "type": "string", "description": "Member ID: M- followed by 5 or 6 digits", "sensitive": true, "max_length": 16, "identifies_record": true}
+  ],
+  "outputs": [
+    {"name": "account_type", "description": "Type of the account the balance belongs to", "parser": {"kind": "enum", "mapping": {"Savings": "savings"}}},
+    {"name": "balance", "description": "Current balance of the savings account", "parser": {"kind": "decimal_money", "locale": "en-US"}, "sensitive": true},
+    {"name": "currency", "description": "Currency code of the balance", "parser": {"kind": "enum", "mapping": {"USD": "USD"}}}
+  ]
+}

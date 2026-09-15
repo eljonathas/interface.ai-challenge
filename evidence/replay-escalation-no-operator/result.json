@@ -1,0 +1,20 @@
+{
+  "assisted": false,
+  "capability_id": "member.savings_balance",
+  "code": "escalation_unavailable",
+  "evidence_ref": "screenshots/0019-failure.png",
+  "expected": {
+    "postcondition": {
+      "kind": "visible",
+      "target_ref": "visual_control"
+    }
+  },
+  "message": "human intervention required (unexpected_dialog) but no operator channel is configured",
+  "observed": {
+    "handler": "unexpected_dialog"
+  },
+  "retryable": false,
+  "run_id": "replay-20260915T131614Z-84ad5d",
+  "status": "failure",
+  "step_id": "s03_click_open_link_in_row"
+}

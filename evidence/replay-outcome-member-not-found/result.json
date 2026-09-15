@@ -1,0 +1,9 @@
+{
+  "assisted": false,
+  "capability_id": "member.savings_balance",
+  "code": "member_not_found",
+  "evidence_ref": null,
+  "run_id": "replay-20260915T131550Z-948f76",
+  "status": "business_outcome",
+  "step_id": "s02_click_search_button"
+}

@@ -1,0 +1,13 @@
+{
+  "artifact": "/Users/andrade/workspace/interface.ai-challenge/evidence/capability/capability.json",
+  "completed": true,
+  "problems": [],
+  "reason": "goal completed and verified",
+  "run_id": "discovery-20260915T131519Z-9956b0",
+  "turns": 7,
+  "usage": {
+    "cached_input_tokens": 35191,
+    "input_tokens": 41848,
+    "output_tokens": 413
+  }
+}
